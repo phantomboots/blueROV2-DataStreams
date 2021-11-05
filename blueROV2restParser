@@ -1,0 +1,29 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Dec  3 19:05:40 2020
+
+@author: SnowBe
+"""
+
+import requests
+import pandas as pd
+import time
+
+while True:
+    
+    resp = requests.get('http://192.168.2.2:4777/mavlink')
+    #This response is a server-side 'Bad Request'; in our case means there is missing data values for lat/long
+    if resp.status_code == 200:
+        data = resp.json()
+        heading = data["VFR_HUD"]['heading'] #This is heading.
+        depth = data["GLOBAL_PRESSURE_INT"]["alt"]  #This the depth parameter
+        print(depth)
+    if resp.status_code != 200 and resp.status_code != 400:
+         # This means something went wrong.
+         raise Exception('Error Code {}'.format(resp.status_code))
+    try:
+         data = resp.json()  
+    except:
+        pass
+    time.sleep(3)
+
